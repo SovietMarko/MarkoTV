@@ -166,10 +166,9 @@ class PlayerActivity : ComponentActivity() {
     private var numberInput by mutableStateOf("")
     private val commitNumberRunnable = Runnable { commitNumber() }
 
-    // «Flashback»: con Atrás se vuelve al canal anterior.
+    // «Flashback»: con Re Pág se vuelve al canal anterior.
     private var currentChannelId: String? = null
     private var previousChannelId: String? = null
-    private var backLongPressed = false
 
     private var retries = 0
     private var triedHls = false
@@ -811,18 +810,10 @@ class PlayerActivity : ComponentActivity() {
         val code = event.keyCode
         if (event.action == KeyEvent.ACTION_DOWN) overlayTick++
 
-        // Atrás / Esc: pulsación corta = flashback (canal anterior); mantener pulsado = salir.
-        if (code == KeyEvent.KEYCODE_BACK || code == KeyEvent.KEYCODE_ESCAPE) {
-            if (event.action == KeyEvent.ACTION_DOWN) {
-                if (event.repeatCount == 0) {
-                    backLongPressed = false
-                } else if (!backLongPressed && event.repeatCount >= LONG_PRESS_REPEATS) {
-                    backLongPressed = true
-                    finish()
-                }
-            } else if (event.action == KeyEvent.ACTION_UP) {
-                if (!backLongPressed && !event.isCanceled) handleBack()
-                backLongPressed = false
+        // Re Pág (PageUp): flashback, vuelve al canal que se veía antes.
+        if (code == KeyEvent.KEYCODE_PAGE_UP) {
+            if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) {
+                if (!flashback()) showNotice("No hay canal anterior")
             }
             return true
         }
@@ -891,7 +882,7 @@ class PlayerActivity : ComponentActivity() {
         showOverlay(false)
     }
 
-    /** Vuelve al canal que se veía antes (y otra vez Atrás regresa al actual). */
+    /** Vuelve al canal que se veía antes (y otra vez Re Pág regresa al actual). */
     private fun flashback(): Boolean {
         val prev = previousChannelId ?: return false
         var i = queue.indexOfFirst { it.id == prev }
@@ -903,7 +894,7 @@ class PlayerActivity : ComponentActivity() {
         }
         startChannel(i)
         showOverlay(false)
-        showNotice("Canal anterior · mantén Atrás para salir")
+        showNotice("Canal anterior")
         return true
     }
 
@@ -915,7 +906,6 @@ class PlayerActivity : ComponentActivity() {
             }
             trackDialog != null -> trackDialog = null
             listVisible -> listVisible = false
-            flashback() -> Unit
             overlayVisible -> overlayVisible = false
             else -> finish()
         }
@@ -1010,7 +1000,7 @@ class PlayerActivity : ComponentActivity() {
         val focusManager = LocalFocusManager.current
         val tv = remember { isTv(this) }
 
-        // Respaldo por si Atrás llega sin evento de tecla (gestos del sistema).
+        // Atrás: cierra números, menús, lista y barra; con todo cerrado, sale.
         BackHandler(enabled = true) { handleBack() }
 
         LaunchedEffect(overlayVisible, overlayTick, listVisible, trackDialog) {
@@ -1460,8 +1450,6 @@ class PlayerActivity : ComponentActivity() {
         private const val NO_VIDEO_TIMEOUT_MS = 5_000L
         /** Tiempo de espera tras el último número antes de cambiar de canal. */
         private const val NUMBER_TIMEOUT_MS = 1_800L
-        /** Repeticiones de tecla (~1 s) que cuentan como «mantener Atrás». */
-        private const val LONG_PRESS_REPEATS = 10
         private val TS_FLAGS = DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES
         private val SPANISH = Locale("es")
 

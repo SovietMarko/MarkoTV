@@ -41,7 +41,7 @@ El APK incluye VLC solo para ARM (armeabi-v7a y arm64-v8a), por eso pesa unos 35
 
 ## Uso en Android TV
 - **Números**: escribe el número del canal (control o teclado, también en el teclado numérico) y cambia solo en 2 segundos, o al pulsar OK/Enter. Funciona en el reproductor y en las pantallas de la app.
-- **Atrás = flashback**: en el reproductor, Atrás vuelve al canal que veías antes (y otra vez Atrás regresa). **Mantén Atrás (o Esc) para salir**, o usa el botón Salir de la barra.
+- **Re Pág (PageUp) = flashback**: en el reproductor vuelve al canal que veías antes (y otra vez Re Pág regresa). **Atrás** funciona como siempre: cierra menús y la lista, y luego sale.
 - ◄ ► ▲ ▼ y OK para moverte. En el reproductor: **OK o ◄ abren la lista de canales**, ► o Info muestran la barra (con el foco en «Lista de canales»), ▲▼ cambian de canal, la tecla de audio/idioma cambia el idioma, Atrás oculta/cierra.
 - Para instalar: copia el APK con un USB o con una app tipo "Downloader" y actívale "Fuentes desconocidas".
 
